@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Max-Burger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pagamento.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="#">MAX <span>♣</span> BURGER</a>
+            </div>
+            <nav>
+                <ul class="leftside">
+                    <li><a href="#"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="{{ url_for('sacola') }}"><i class="fas fa-bag-shopping"></i> Sacola</a></li>
+                    <li><a href="#"><i class="fas fa-phone-alt"></i> Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="pagamento-section">
+        <div class="container">
+            <h1>Pagamento</h1>
+            <div id="botoes-pagamento">
+                <button id="debito-btn" class="botao-selecao" type="button">Débito</button>
+                <button id="pix-btn" class="botao-selecao" type="button">Pix</button>
+                <button id="credito-btn" class="botao-selecao" type="button">Crédito</button>
+            </div>
+            
+            <div id="pix-section" style="display: none;">
+                <h2>Código Pix</h2>
+                <p id="pix-code"></p>
+                <div class="total">
+                    <p>Total: R$ {{ request.args.get('valor_total', '0.00') }}</p>
+                </div>
+
+                <button type="submit" class="pagar-btn"><i class="fas fa-credit-card"></i> Confirmar Pagamento</button>
+            </div>
+            <div id="cartao-section" style="display: none;">
+                <form action="/confirmacao" method="GET">
+                    <div class="form-group">
+                        <label for="numero-cartao">Número do Cartão</label>
+                        <input type="text" id="numero-cartao" name="numero_cartao" maxlength="16" required>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="validade">Validade</label>
+                        <input type="text" id="validade" name="validade" placeholder="MM/AA" required>
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" name="cvv" maxlength="3" required>
+                    </div>
+            
+                    <div class="form-group" id="parcelas-group" style="display: none;">
+                        <label for="parcelas">Número de Parcelas</label>
+                        <select id="parcelas" name="parcelas">
+                            <option value="1">1x</option>
+                            <option value="2">2x</option>
+                            <option value="3">3x</option>
+                        </select>
+                    </div>
+            
+                    <div class="total">
+                        <p>Total: R$ {{ request.args.get('valor_total', '0.00') }}</p>
+                    </div>
+                    
+            
+                    <button type="submit" class="pagar-btn"><i class="fas fa-credit-card"></i> Pagar Agora</button>
+                </form>
+            </div>
+            
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <div class="logo">
+                <a href="#">MAX <span>♣</span> BURGER</a>
+            </div>
+            <div class="copyrights">Criado por Lynkon Maydana, Gustavo Fonseca & Beatriz Gerardi</div>
+        </div>
+    </footer>
+    <script>
+        // Função para gerar código Pix aleatório
+        function gerarCodigoPix() {
+            const codigo = Math.random().toString(36).substr(2, 15).toUpperCase();
+            document.getElementById("pix-code").innerText = codigo;
+        }
+    
+        // Mostrar e esconder as seções de acordo com o botão clicado
+        document.getElementById("pix-btn").addEventListener("click", function () {
+            document.getElementById("pix-section").style.display = "block";
+            document.getElementById("cartao-section").style.display = "none";
+            gerarCodigoPix();
+        });
+    
+        document.getElementById("debito-btn").addEventListener("click", function () {
+            document.getElementById("pix-section").style.display = "none";
+            document.getElementById("cartao-section").style.display = "block";
+            document.getElementById("parcelas-group").style.display = "none"; // Ocultar parcelas no débito
+        });
+    
+        document.getElementById("credito-btn").addEventListener("click", function () {
+            document.getElementById("pix-section").style.display = "none";
+            document.getElementById("cartao-section").style.display = "block";
+            document.getElementById("parcelas-group").style.display = "block"; // Mostrar parcelas no crédito
+        });
+    </script>
+    
+</body>
+</html>

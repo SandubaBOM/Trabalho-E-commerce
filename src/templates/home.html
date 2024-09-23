@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Max-Burger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href=""> MAX <span>♣</span> BURGER</a>
+            </div>
+            <nav>
+                <ul class="leftside">
+                    <li><a href=""><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#burguers"><i class="fas fa-hamburger"></i> Burgers</a></li>
+                    <li><a href=""><i class="fas fa-phone"></i> Contato</a></li>
+                </ul>
+                
+                <div class="rightsde">
+                    {% if session.get('client_logged_in') %}
+                        <span>Bem-vindo, {{ session['user_name'] }}!</span>
+                        <a href="{{ url_for('logoutCL') }}" class="icon-logout" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </a>
+                    
+                    {% else %}
+                        <a href="{{ url_for('loginCL') }}" class="button">
+                            <i class="fas fa-user-lock"></i> Fazer Login
+                        </a>
+                    {% endif %}
+                </div>
+                
+                
+                
+                
+            </nav>
+            <div class="menu">
+                <div class="menu-icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="leftside">
+                <a href="{{ url_for('admin') }}" class="test-button"></a>
+                <h1>O Hamburguer mais delicioso. 😋</h1>
+                <p>A primeira hamburgueria virtual que você faz o pedido </br> online e come o burger através do computador.</p>
+                <a href="{{ url_for('fazer_pedido') }}" class="button"><i class="fas fa-shopping-bag"></i> Fazer pedido</a>
+            </div>
+            <div class="rightside">
+                <img src="{{ url_for('static', filename='assets/heroBurger.png') }}" alt="Hamburger" />
+            </div>
+        </div>
+    </section>
+    <section class="search">
+        <div class="container">
+            
+            <div class="search">
+                <div class="title">Pesquise o seu<br />Hamburguer favorito!</div>
+                <div class="sides">
+                    <div class="leftside">
+                        <div class="input-container">
+                            <i class="fas fa-search search-icon"></i> <!-- Ícone de busca do Font Awesome -->
+                            <input type="search" id="searchInput" placeholder="Digite o nome do Burger" />
+                        </div>
+                    </div>
+
+                    <div class="rightside">
+                        <div class="select-container">
+                            <i class="fas fa-list select-icon"></i> <!-- Ícone de categorias do Font Awesome -->
+                            <select id="categorySelect">
+                                <option value="">Todas as Categorias</option>
+                                <option value="burgers">Burgers</option>
+                                <option value="kids">Kids</option>
+                                <option value="bebidas">Bebidas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <main>
+        <div class="container" id="burguers">
+            <div class="products-grid">
+                <!-- Produtos já existentes -->
+                <a href="" class="product-item" data-name="Uni Burger" data-category="burgers">
+                    <div class="warning"> Promoção</div>
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/burgers/burger1.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Uni Burger</div>
+                        <div class="product-price">R$ 25,50</div>
+                    </div>
+                </a>
+                <a href="" class="product-item" data-name="Max Burger" data-category="burgers">
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/burgers/burger2.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Max Burger</div>
+                        <div class="product-price">R$ 29,90</div>
+                    </div>
+                </a>
+                <a href="" class="product-item" data-name="Amendoim Burger" data-category="burgers">
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/burgers/burger3.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Amendoim Burger</div>
+                        <div class="product-price">R$ 35,90</div>
+                    </div>
+                </a>
+                <a href="" class="product-item" data-name="Clássico da casa" data-category="burgers">
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/burgers/burger2.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Clássico da casa</div>
+                        <div class="product-price">R$ 39,90</div>
+                    </div>
+                </a>
+                <a href="" class="product-item" data-name="Old school burger" data-category="burgers">
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/burgers/burger4.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Old school burger</div>
+                        <div class="product-price">R$ 42,90</div>
+                    </div>
+                </a>
+                <a href="" class="product-item" data-name="Vintage burger" data-category="burgers">
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/burgers/burger1.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Vintage burger</div>
+                        <div class="product-price">R$ 45,90</div>
+                    </div>
+                </a>
+    
+            </div>
+        </div>
+
+
+        <div class="container" id="kids">
+            <div class="products-grid">
+
+                <a href="" class="product-item" data-name="Kids Burguer" data-category="kids">
+                    
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/kids/kidsBurguer.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        <div class="product-category">Tradicional</div>
+                        <div class="product-name">Kids Burger</div>
+                        <div class="product-price">R$ 20,50</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+
+
+        <div class="container" id="bebidas">
+            <div class="products-grid">
+
+                <a href="" class="product-item" data-name="Agua" data-category="bebidas">
+                    
+                    <div class="photo">
+                        <img src="{{ url_for('static', filename='assets/bebidas/agua.png') }}" alt="">
+                    </div>
+                    <div class="info">
+                        
+                        <div class="product-name">Água</div>
+                        <div class="product-price">R$ 7,50</div>
+                    </div>
+                </a>
+
+                
+            </div>
+        </div>
+
+
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="logo">
+                <a href=""> MAX <span>♣</span> BURGER</a>
+            </div>
+            <div class="copyrights">criado por <a href=""><i class="fas fa-user"></i> Lynkon Maydana, Gustavo Fonseca & Beatriz Gerardi</a></div>
+        </div>
+    </footer>
+</body>
+</html> 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const categorySelect = document.getElementById('categorySelect');
+        const productItems = document.querySelectorAll('.product-item');
+
+        // Função para filtrar os produtos
+        function filterProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categorySelect.value.toLowerCase();
+
+            productItems.forEach(item => {
+                const name = item.getAttribute('data-name').toLowerCase();
+                const category = item.getAttribute('data-category').toLowerCase();
+
+                // Condição para mostrar ou esconder os produtos
+                if (
+                    (name.includes(searchTerm) || searchTerm === '') &&
+                    (category.includes(selectedCategory) || selectedCategory === '')
+                ) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Eventos para input e seleção de categoria
+        searchInput.addEventListener('input', filterProducts);
+        categorySelect.addEventListener('change', filterProducts);
+    });
+</script>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedido - Max-Burger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pedido.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+    
+    
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">MAX <span>♣</span> BURGER</a>
+            </div>
+            <nav>
+                <ul class="leftside">
+                    <li><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="{{ url_for('sacola') }}"><i class="fas fa-bag-shopping"></i> Sacola</a></li>
+                    <li><a href="#"><i class="fas fa-phone-alt"></i> Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="order-section">
+      <div class="container">
+          <h1>Realize seu Pedido</h1>
+          <form action="{{ url_for('fazer_pedido') }}" method="POST" class="order-form">
+              <div class="form-group">
+                  <label for="categoria">Selecione a Categoria:</label>
+                  <select id="categoria" name="categoria" required>
+                      <option value="">Escolha uma categoria</option>
+                      <option value="burger">Burgers</option>
+                      <option value="kids">Kids</option>
+                      <option value="bebidas">Bebidas</option>
+                  </select>
+              </div>
+  
+              <div class="form-group produto-group hidden">
+                <label for="produto">Selecione o Produto:</label>
+                <select id="produto" name="produto" required>
+                    <option value="">Escolha o Produto</option>
+
+
+                    <!-- Burgers -->
+                    <option class="burger-item" value="Uni Burger" data-price="25.50" data-img="{{ url_for('static', filename='assets/burgers/burger1.png') }}">Uni Burger - R$ 25,50</option>
+                    <option class="burger-item" value="Max Burger" data-price="29.90" data-img="{{ url_for('static', filename='assets/burgers/burger2.png') }}">Max Burger - R$ 29,90</option>
+                    <option class="burger-item" value="Amendoim Burger" data-price="35.90" data-img="{{ url_for('static', filename='assets/burgers/burger2.png') }}">Amendoim Burger - R$ 35,90</option>
+                    <option class="burger-item" value="Classico da Casa Burger" data-price="39.90" data-img="{{ url_for('static', filename='assets/burgers/burger2.png') }}">Classico da Casa - R$ 39,90</option>
+                    <option class="burger-item" value="Old school Burger" data-price="42.90" data-img="{{ url_for('static', filename='assets/burgers/burger2.png') }}">Old school Burger - R$ 42,90</option>
+                    <option class="burger-item" value="Vintage Burger" data-price="45.90" data-img="{{ url_for('static', filename='assets/burgers/burger2.png') }}">Vintage Burger - R$ 45,90</option>
+                    
+                    
+                    
+                    <!-- Kids -->
+                    
+                    <option class="kids-item" value="Kids" data-price="20.50" data-img="{{ url_for('static', filename='assets/kids/kidsBurguer.png') }}">Kids Burger - Kids - R$ 20,50</option>
+                    
+                    
+                    
+                    <!-- Bebidas -->
+                    
+                    <option class="bebidas-item" value="Agua" data-price="7.50" data-img="{{ url_for('static', filename='assets/bebidas/agua.png') }}">Água - R$ 7,50</option>
+                </select>
+                <div class="burger-preview">
+                    <img src="{{ url_for('static', filename='assets/burgers/burger1.png') }}" id="burger-img" alt="Hamburger Preview" />
+                </div>
+            </div>
+  
+              <input type="hidden" id="preco" name="preco">
+              
+              <div class="form-group quantidade-group">
+                  <label for="quantidade">Quantidade:</label>
+                  <div class="quantidade-control">
+                      <button type="button" class="quantidade-btn decrement"><i class="fas fa-minus"></i></button>
+                      <input type="number" id="quantidade" name="quantidade" min="1" value="1" required />
+                      <button type="button" class="quantidade-btn increment"><i class="fas fa-plus"></i></button>
+                  </div>
+              </div>
+
+              <div class="form-group burger-point hidden">
+                <label for="ponto">Selecione o ponto da carne:</label>
+                <select id="ponto" name="ponto">
+                    <option value="">Selecione o ponto</option>
+                    <option value="mal_passada">Mal Passada</option>
+                    <option value="ao_ponto">Ao Ponto</option>
+                    <option value="bem_passada">Bem Passada</option>
+                </select>
+            </div>
+  
+              <button type="submit" class="button" id="addsacola">
+                  <i class="fas fa-bag-shopping"></i> Adicionar a Sacola
+              </button>
+          </form>
+      </div>
+
+      
+
+
+  </section>
+  
+
+    <footer>
+        <div class="container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">MAX <span>♣</span> BURGER</a>
+            </div>
+            <div class="copyrights">
+                criado por <a href="#">Lynkon Maydana, Gustavo Fonseca & Beatriz Gerardi</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  // Função para atualizar a imagem do produto e o preço ao selecionar um produto
+  function atualizarImagemEPreco() {
+    const produtoSelect = document.getElementById("produto");
+    const selectedOption = produtoSelect.options[produtoSelect.selectedIndex];
+    const imgSrc = selectedOption.getAttribute("data-img");
+    const price = selectedOption.getAttribute("data-price");
+
+    // Atualiza a imagem do produto
+    const burgerImg = document.getElementById("burger-img");
+    if (imgSrc) {
+      burgerImg.src = imgSrc;
+      burgerImg.style.display = "block"; // Exibe a imagem
+    } else {
+      burgerImg.src = "";
+      burgerImg.style.display = "none"; // Oculta a imagem
+    }
+
+    // Atualiza o campo hidden de preço
+    document.getElementById("preco").value = price;
+
+    // Atualiza visibilidade do ponto de carne
+    const pontoCarneElement = document.querySelector(".burger-point");
+    const tipoProduto = selectedOption.getAttribute("data-type");
+    pontoCarneElement.classList.toggle("hidden", tipoProduto !== "burger");
+  }
+
+  // Função para exibir opções com base na categoria selecionada
+  function atualizarCategoria() {
+    const categoria = this.value;
+    const produtoSelect = document.getElementById("produto");
+    const produtoGroup = document.querySelector(".produto-group");
+    const burgerImg = document.getElementById("burger-img");
+
+    if (categoria) {
+      produtoGroup.classList.remove("hidden");
+      Array.from(produtoSelect.options).forEach((option) => {
+        if (option.classList.contains(`${categoria}-item`) || option.value === "") {
+          option.style.display = "block";
+        } else {
+          option.style.display = "none";
+        }
+      });
+      produtoSelect.value = "";
+      burgerImg.style.display = "none";
+      burgerImg.src = "";
+      // Atualiza a visibilidade do ponto da carne quando a categoria mudar
+      atualizarImagemEPreco(); // Chama para garantir que o estado está correto
+    } else {
+      produtoGroup.classList.add("hidden");
+      produtoSelect.value = "";
+      burgerImg.style.display = "none";
+      burgerImg.src = "";
+    }
+  }
+
+  // Eventos
+  document.getElementById("produto").addEventListener("change", atualizarImagemEPreco);
+  document.getElementById("categoria").addEventListener("change", atualizarCategoria);
+
+  // Butões de aumentar e diminuir quantidade
+  // Aumentar quantidade
+  document.querySelector('.increment').addEventListener('click', function() {
+    var quantidadeInput = document.getElementById('quantidade');
+    var quantidadeAtual = parseInt(quantidadeInput.value) || 0;
+    quantidadeInput.value = quantidadeAtual + 1;
+  });
+
+  // Diminuir quantidade
+  document.querySelector('.decrement').addEventListener('click', function() {
+    var quantidadeInput = document.getElementById('quantidade');
+    var quantidadeAtual = parseInt(quantidadeInput.value) || 1;
+    if (quantidadeAtual > 1) {
+      quantidadeInput.value = quantidadeAtual - 1;
+    }
+  });
+
+  // Exibir ou ocultar a seção do ponto da carne
+  function togglePontoCarne() {
+    const produtoSelect = document.getElementById('produto');
+    const pontoCarneGroup = document.querySelector('.burger-point');
+    const produtoSelecionado = produtoSelect.options[produtoSelect.selectedIndex];
+
+    // Verifica se o produto selecionado é um burger
+    pontoCarneGroup.classList.toggle('hidden', !produtoSelecionado.classList.contains('burger-item'));
+  }
+
+  // Adiciona o evento ao select de produtos
+  document.getElementById('produto').addEventListener('change', togglePontoCarne);
+</script>
+
+    
+</body>
+</html>

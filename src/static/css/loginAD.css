@@ -1,0 +1,113 @@
+/* Estilos para a tela de login */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8); /* Fundo escuro com mais opacidade */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo para o container de login */
+.login-container {
+    background: #1c1c1c; /* Fundo escuro */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Estilo para o texto de login */
+.login-container h2 {
+    color: #FE6A0F; /* Cor do título */
+    margin-bottom: 20px; /* Espaçamento abaixo do título */
+    font-size: 1.8em;
+}
+
+/* Estilo para os campos de input */
+.login-container .input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: #333;
+    border-radius: 5px;
+}
+
+.login-container .input-group i {
+    color: #FE6A0F;
+    padding: 10px;
+}
+
+.login-container input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #141414; /* Fundo dos inputs */
+    color: white; /* Cor do texto dos inputs */
+    outline: none;
+}
+
+.login-container input::placeholder {
+    color: #aaa;
+}
+
+/* Grupo de Botões para alinhar os botões Back e Login */
+.button-group {
+    display: flex;
+    justify-content: space-between; /* Espaço entre os botões */
+    gap: 10px; /* Espaço entre os botões */
+    margin-top: 20px;
+}
+
+/* Estilo comum para ambos os botões */
+button {
+    flex: 1; /* Faz com que os botões ocupem o mesmo espaço */
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #FE6A0F; /* Cor principal do botão */
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, box-shadow 0.3s; /* Transição suave para hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+    text-decoration: none; /* Remove o sublinhado do link */
+}
+
+button i {
+    margin-right: 8px;
+}
+
+/* Estilo de hover para ambos os botões */
+button:hover {
+    background-color: #e5593f; /* Cor de hover ajustada para um tom mais escuro */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Sombra mais intensa no hover */
+}
+
+/* Estilo específico para o botão de Voltar (Back) */
+.back-button {
+    background-color: #FE6A0F; /* Cor ajustada para o botão de voltar */
+}
+
+/* Estilo para mensagens de erro */
+.error {
+    color: red;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+
+.buttons{
+    display: flex;
+    align-content: space-around;
+    gap: 200px;
+}

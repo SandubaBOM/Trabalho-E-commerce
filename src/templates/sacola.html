@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacola - Max-Burger</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sacola.css') }}" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    
+    
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">MAX <span>♣</span> BURGER</a>
+            </div>
+            <nav>
+                <ul class="leftside">
+                    <li><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Início</a></li>
+                    <li><a href="#"><i class="fas fa-phone-alt"></i> Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="sacola-section">
+        <div class="container">
+            <h1>Sua Sacola</h1>
+            <table class="sacola-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Produto</th>
+                        <th style="width: 25%;">Quantidade</th>
+                        <th style="width: 25%;">Preço Unitário</th>
+                        <th style="width: 25%;" data-label="Subtotal">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in sacola %}
+                    <tr id="item-{{ loop.index0 }}">
+                        <td data-label="Produto">{{ item[0] }}</td> <!-- item[0] = nome do produto -->
+                        <td data-label="Quantidade">
+                            <button class="increment" data-item="{{ loop.index0 }}" onclick="alterarQuantidade('{{ loop.index0 }}', 1)">+</button>
+                            <span id="quantidade-{{ loop.index0 }}">{{ item[1] }}</span>
+                            <button class="decrement" data-item="{{ loop.index0 }}" onclick="alterarQuantidade('{{ loop.index0 }}', -1)">-</button>
+
+                        </td>
+                        <td data-label="Preço Unitário">R$ {{ "%.2f"|format(item[2]) }}</td>
+                        <td data-label="Subtotal">R$ <span id="subtotal-{{ loop.index0 }}">{{ "%.2f"|format(item[1] * item[2]) }}</span></td> <!-- Subtotal -->
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                
+                
+                
+            </table>
+    
+            <div class="total">
+                <p>Total: R$ {{ "%.2f"|format(total) }}</p>
+            </div>
+            <div class="botoes-actions">
+                <a href="fazer_pedido" class="adicionar-btn"><i class="fas fa-plus"></i> Adicionar mais itens</a>
+                <form action="{{ url_for('cancelar_pedido') }}" method="POST" style="display:inline;">
+                    <button type="submit" class="cancelar-btn"><i class="fas fa-times-circle"></i> Cancelar pedido</button>
+                </form>
+                <form action="{{ url_for('pagamento') }}" method="GET" style="display:inline;">
+                    <input type="hidden" id="valor_total" name="valor_total" value="">
+                    <button type="submit" class="finalizar-btn"><i class="fas fa-check-circle"></i> Finalizar Pedido</button>
+                </form>
+
+                
+            </div>
+        </div>
+    </section>
+    
+    
+    <footer>
+        <div class="container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">MAX <span>♣</span> BURGER</a>
+            </div>
+            <div class="copyrights">Criado por <a href="#">Lynkon Maydana, Gustavo Fonseca & Beatriz Gerardi</a></div>
+        </div>
+    </footer>
+
+
+
+
+
+    <script>
+        let listenersAdded = false;
+
+        function addClickListeners() {
+            console.log("Adicionando listeners"); // Adiciona um log
+
+            document.querySelectorAll('.increment').forEach(button => {
+                button.removeEventListener('click', incrementHandler);
+                button.addEventListener('click', incrementHandler);
+            });
+
+            document.querySelectorAll('.decrement').forEach(button => {
+                button.removeEventListener('click', decrementHandler);
+                button.addEventListener('click', decrementHandler);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!listenersAdded) {
+                addClickListeners();
+                listenersAdded = true; // Previne chamadas futuras
+            }
+        });
+
+        
+
+        
+        
+        
+        function alterarQuantidade(index, delta) {
+            console.log(`alterarQuantidade chamado com index: ${index} e delta: ${delta}`);
+            const quantidadeElement = document.getElementById('quantidade-' + index);
+            let quantidadeAtual = parseInt(quantidadeElement.innerText) || 0;
+        
+            // Atualiza a quantidade
+            quantidadeAtual += delta;
+        
+            if (quantidadeAtual < 1) {
+                // Remover o item da sacola se a quantidade for menor que 1
+                removerItemDaSacola(index);
+            } else {
+                quantidadeElement.innerText = quantidadeAtual; // Atualiza a exibição
+                const price = parseFloat(document.querySelector(`#item-${index} td[data-label="Preço Unitário"]`).textContent.replace('R$ ', '').replace(',', '.'));
+                updateSubtotal(index, quantidadeAtual, price); // Atualiza o subtotal
+                atualizarQuantidadeNoBackend(index, quantidadeAtual); // Atualiza no backend
+            }
+        }
+        
+        
+        function updateSubtotal(index, quantidade, price) {
+            const subtotalElement = document.getElementById(`subtotal-${index}`);
+            const subtotal = quantidade * price;
+            subtotalElement.textContent = subtotal.toFixed(2); // Atualiza a exibição do subtotal
+            atualizarTotal(); // Atualiza o total ao final
+        }
+        
+        function removerItemDaSacola(itemId) {
+            fetch(`/remover_item/${itemId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove a linha da tabela
+                    var itemRow = document.getElementById('item-' + itemId);
+                    itemRow.remove();
+                    atualizarTotal(); // Atualiza o total após a remoção
+                    alert("Item removido da sacola.");
+                } else {
+                    alert("Erro ao remover o item: " + data.error);
+                }
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+            });
+        }
+        
+        function atualizarTotal() {
+            var total = 0;
+            var subtotais = document.querySelectorAll("td[data-label='Subtotal'] span");
+            subtotais.forEach(subtotal => {
+                total += parseFloat(subtotal.innerText.replace(',', '.'));
+            });
+            document.querySelector('.total p').innerText = `Total: R$ ${total.toFixed(2)}`;
+        }
+        
+
+        function updateSubtotal(index, quantidade, price) {
+            const subtotalElement = document.getElementById(`subtotal-${index}`);
+            const subtotal = quantidade * price;
+            subtotalElement.textContent = subtotal.toFixed(2); // Atualiza a exibição do subtotal
+            atualizarTotal(); // Atualiza o total ao final
+        }
+        
+        function atualizarCampoValorTotal() {
+            const total = document.querySelector('.total p').innerText.replace('Total: R$ ', '').replace(',', '.');
+            document.getElementById('valor_total').value = total;
+        }
+        
+        // Quando o DOM estiver pronto, adicione um listener no formulário para garantir que o valor total será enviado
+        document.addEventListener('DOMContentLoaded', function() {
+            const formPagamento = document.querySelector('form[action="{{ url_for('pagamento') }}"]');
+            
+            formPagamento.addEventListener('submit', function() {
+                atualizarCampoValorTotal(); // Atualiza o valor total antes de enviar o formulário
+            });
+        });
+        
+        
+        
+        
+        
+        
+    </script>
+    
+    
+
+</body>
+</html>

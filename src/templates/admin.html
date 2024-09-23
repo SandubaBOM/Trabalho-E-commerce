@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+                {% endif %}
+            {% endwith %}
+
+    </div>
+
+    <header>
+        <h1>Painel de Administração</h1>
+        <nav>
+            <a href="{{ url_for('logoutAD') }}" class="button">Logout</a>
+            <a href="{{ url_for('home') }}" class="button">Home</a>
+            <a href="{{ url_for('dados') }}" class="button">Dados</a>
+            
+        </nav>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Gerenciamento de Dados</h2>
+            <form action="{{ url_for('admin') }}" method="POST">
+                <label for="table-select">Escolha a tabela:</label>
+                <select id="table-select" name="table" onchange="showForm(this.value)">
+                    <option value="">Selecione uma tabela</option>
+                    <option value="clientes">Clientes</option>
+                    <option value="produto">Produto</option>
+                    <option value="pedido">Pedido</option>
+                    <option value="endereco">Endereço</option>
+                    <option value="feedback">Feedback</option>
+                </select>
+        
+                <input type="hidden" id="action" name="action" value="inserir">
+                <div id="form-container">
+                    <!-- Formulários dinâmicos serão adicionados aqui -->
+                </div>
+        
+                <div class="buttons">
+                    <button type="submit" class="button-insert">Inserir Dados</button>
+                    <button type="button" class="button-delete" onclick="confirmDelete()">Apagar Dados</button>
+                </div>
+            </form>
+        </section>
+        
+    <script>
+        // Exibe o campo de senha se o usuário selecionar a opção de apagar
+        function confirmDelete() {
+            const confirmation = confirm("Tem certeza que deseja apagar os dados? Essa ação é irreversível.");
+            if (confirmation) {
+                const password = prompt("Por favor, insira a senha de admin:");
+                if (password) {
+                    const passwordField = document.createElement("input");
+                    passwordField.type = "hidden";
+                    passwordField.name = "confirm_password";
+                    passwordField.value = password;
+                    document.querySelector('form').appendChild(passwordField);
+        
+                    document.getElementById('action').value = "apagar";  // Define a ação como apagar
+                    document.querySelector('form').submit();
+                } else {
+                    alert("Senha não inserida. Operação cancelada.");
+                }
+            }
+        }
+        
+    </script>
+        
+    </main>
+
+    <script>
+        function showForm(table) {
+            const formContainer = document.getElementById('form-container');
+            formContainer.innerHTML = '';
+
+            if (table === '') return;
+
+            let formHtml = '';
+            switch(table) {
+                case 'clientes':
+                    formHtml = `
+                        <label for="cliente_id">ID Cliente:</label>
+                        <input type="number" id="cliente_id" name="cliente_id" required>
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" name="nome" required>
+                        <label for="telefone">Telefone:</label>
+                        <input type="text" id="telefone" name="telefone" required>
+                    `;
+                    break;
+                    case 'produto':
+                    formHtml = `
+                        <label for="id_produto">ID Produto:</label>
+                        <input type="number" id="id_produto" name="id_produto" required>
+                        <label for="nome_produto">Nome do Produto:</label>
+                        <input type="text" id="nome_produto" name="nome_produto" required>
+                        <label for="valor_prod">Valor:</label>
+                        <input type="number" step="0.01" id="valor_prod" name="valor_prod" required>
+                        
+                        <label for="categoria">Categoria:</label>
+                        <select id="categoria" name="categoria" required onchange="updateFields()">
+                            <option value="">Selecione a Categoria</option>
+                            <option value="Burgers">Burgers</option>
+                            <option value="Kids">Kids</option>
+                            <option value="Bebidas">Bebidas</option>
+                        </select>
+    
+                        <div id="tamanho-container" style="display: none;">
+                            <label for="tamanho">Tamanho:</label>
+                            <select id="tamanho" name="tamanho">
+                                <option value="Padrão">Padrão</option>
+                                <option value="Grande">Grande</option>
+                            </select>
+                        </div>
+    
+                        <div id="ponto-carne-container" style="display: none;">
+                            <label for="ponto_carne">Ponto da Carne:</label>
+                            <select id="ponto_carne" name="ponto_carne">
+                                <option value="mal passado">Mal Passado</option>
+                                <option value="ao ponto">Ao Ponto</option>
+                                <option value="bem passado">Bem Passado</option>
+                            </select>
+                        </div>
+                    `;
+                    break;
+
+
+                case 'pedido':
+                    formHtml = `
+                        <label for="id_compra">ID Compra:</label>
+                        <input type="number" id="id_compra" name="id_compra" required>
+                        <label for="produto_id">ID do Produto:</label>
+                        <input type="number" id="produto_id" name="produto_id" required>
+                        <label for="cliente_id">ID do Cliente:</label>
+                        <input type="number" id="cliente_id" name="cliente_id" required>
+                        <label for="forma_pagamento">Forma de Pagamento:</label>
+                        <input type="text" id="forma_pagamento" name="forma_pagamento" required>
+                        <label for="status">Status:</label>
+                        <input type="text" id="status" name="status" required>
+                    `;
+                    break;
+                case 'endereco':
+                    formHtml = `
+                        <label for="cep">CEP:</label>
+                        <input type="number" id="cep" name="cep" required>
+                        <label for="rua">Rua:</label>
+                        <input type="text" id="rua" name="rua" required>
+                        <label for="bairro">Bairro:</label>
+                        <input type="text" id="bairro" name="bairro" required>
+                        <label for="numero_casa">Número:</label>
+                        <input type="number" id="numero_casa" name="numero_casa" required>
+                        <label for="cliente_id">ID Cliente:</label>
+                        <input type="number" id="cliente_id" name="cliente_id" required>
+                    `;
+                    break;
+                case 'feedback':
+                    formHtml = `
+                        <label for="client_id">ID Cliente:</label>
+                        <input type="number" id="client_id" name="client_id" required>
+                        <label for="produtoId">ID do Produto:</label>
+                        <input type="number" id="produtoId" name="produtoId" required>
+                        <label for="descricao_avalia">Descrição da Avaliação:</label>
+                        <textarea id="descricao_avalia" name="descricao_avalia" rows="4" required></textarea>
+                    `;
+                    break;
+            }
+
+            formContainer.innerHTML = formHtml;
+        }
+        function updateFields() {
+            const categoria = document.getElementById('categoria').value;
+            const tamanhoContainer = document.getElementById('tamanho-container');
+            const pontoCarneContainer = document.getElementById('ponto-carne-container');
+            
+            // Lógica de exibição de campos com base na categoria
+            if (categoria === 'Burgers') {
+                tamanhoContainer.style.display = 'block';
+                pontoCarneContainer.style.display = 'block';
+            } else if (categoria === 'Kids') {
+                tamanhoContainer.style.display = 'none';  // Kids não tem tamanho
+                pontoCarneContainer.style.display = 'block';
+            } else {
+                tamanhoContainer.style.display = 'none';
+                pontoCarneContainer.style.display = 'none';
+            }
+        }
+
+    </script>
+</body>
+</html>
